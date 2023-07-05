@@ -1,23 +1,24 @@
 const express = require('express');
 const app = express();
+
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // In-memory data structure to store user data
 let users = [];
 // Get all users
 app.get('/users', (req, res) => {
-  console.log(users)
   res.json(users);
 });
 
 // Get a specific user by ID
 app.get('/users/:id', (req, res) => {
   const userId = req.params.id;
-  const user = users.filter(user => user.id === parseInt(userId));
-  if (!user) {
+  const user = users.filter(user => parseInt(user.id) === parseInt(userId));
+  if (user.length < 1) {
     return res.status(404).json({ error: 'User not found' });
   }
-  res.json(user);
+  res.json(user[0]);
 });
 
 // Create a new user
@@ -61,4 +62,4 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-module.exports = app
+module.exports = {app, users};
